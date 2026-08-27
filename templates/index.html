@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YT Grabber — YouTube Video &amp; Playlist Downloader</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Ticker Bar -->
+    <div class="ticker-bar">
+        <div class="ticker-track">
+            <span>YT GRABBER</span>
+            <span class="dot">&middot;</span>
+            <span>VIDEOS + PLAYLISTS</span>
+            <span class="dot">&middot;</span>
+            <span>POWERED BY YT-DLP</span>
+            <span class="dot">&middot;</span>
+            <span>NO WATERMARKS</span>
+            <span class="dot">&middot;</span>
+            <span>FREE FOREVER</span>
+            <span class="dot">&middot;</span>
+            <span>YT GRABBER</span>
+            <span class="dot">&middot;</span>
+            <span>VIDEOS + PLAYLISTS</span>
+            <span class="dot">&middot;</span>
+            <span>POWERED BY YT-DLP</span>
+            <span class="dot">&middot;</span>
+            <span>NO WATERMARKS</span>
+            <span class="dot">&middot;</span>
+            <span>FREE FOREVER</span>
+        </div>
+    </div>
+
+    <!-- Top Navbar -->
+    <header class="navbar">
+        <div class="navbar-inner">
+            <a href="/" class="brand">
+                <span class="brand-mark"><i class="fas fa-play"></i></span>
+                <span class="brand-text">yt<span class="accent">grabber</span></span>
+            </a>
+            <div class="navbar-badge">
+                <span class="pulse-dot"></span>
+                <span>engine ready &middot; yt-dlp core</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Main Content -->
+        <main class="main-content">
+
+            <!-- Hero -->
+            <section class="hero">
+                <span class="eyebrow"><i class="fas fa-download"></i> YOUTUBE DOWNLOADER</span>
+                <h1 class="hero-title">Grab any video.<br>In any quality.</h1>
+                <p class="hero-subtitle">
+                    Paste a link, pick a quality, download &mdash; works for single videos and full playlists.
+                </p>
+            </section>
+
+            <!-- URL Input Section -->
+            <section class="input-section">
+                <div class="input-container dropzone-style">
+                    <div class="dropzone-icon"><i class="fab fa-youtube"></i></div>
+                    <div class="input-wrapper">
+                        <input
+                            type="text"
+                            id="urlInput"
+                            class="url-input"
+                            placeholder="Paste YouTube URL here (video or playlist)..."
+                            autocomplete="off"
+                        >
+                        <button id="fetchBtn" class="btn btn-fetch">
+                            <i class="fas fa-search"></i> Get Info
+                        </button>
+                    </div>
+                    <p class="dropzone-hint">Supports single videos and full playlists &mdash; just paste and go</p>
+                    <div id="urlError" class="error-message"></div>
+                </div>
+            </section>
+
+            <!-- Fetching Info Loader -->
+            <section id="loadingSection" class="loading-section hidden">
+                <div class="loading-card">
+                    <div class="spinner"></div>
+                    <p>Fetching video info&hellip;</p>
+                </div>
+            </section>
+
+            <!-- Content Type Indicator -->
+            <section id="typeIndicator" class="type-indicator hidden">
+                <span id="contentType" class="type-badge"></span>
+            </section>
+
+            <!-- Video/Playlist Info Section -->
+            <section id="infoSection" class="info-section hidden">
+                <div class="info-card">
+                    <div class="info-header">
+                        <div class="info-thumbnail" id="thumbnail"></div>
+                        <div class="info-details">
+                            <h2 id="title" class="info-title"></h2>
+                            <p id="info-text" class="info-text"></p>
+                        </div>
+                    </div>
+
+                    <!-- Quality Selection -->
+                    <div class="quality-section">
+                        <h3>Available Qualities</h3>
+                        <div id="qualityContainer" class="quality-grid">
+                            <!-- Quality options will be populated here -->
+                        </div>
+                    </div>
+
+                    <!-- Playlist Videos Preview (if applicable) -->
+                    <div id="playlistPreview" class="playlist-preview hidden">
+                        <h3>Videos in Playlist (<span id="videoCount">0</span>)</h3>
+                        <div id="videosList" class="videos-list">
+                            <!-- Video list will be populated here -->
+                        </div>
+                    </div>
+
+                    <!-- Download Button -->
+                    <div class="action-buttons">
+                        <button id="downloadBtn" class="btn btn-primary">
+                            <i class="fas fa-arrow-down"></i> Start Download
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Download Progress Section -->
+            <section id="progressSection" class="progress-section hidden">
+                <div class="progress-card">
+                    <div class="progress-head">
+                        <h3 id="progressTitle">Downloading&hellip;</h3>
+                        <span id="progressPercent" class="progress-percent">0%</span>
+                    </div>
+                    <div class="progress-bar-container">
+                        <div id="progressBar" class="progress-bar"></div>
+                    </div>
+                    <div class="progress-stats">
+                        <div class="progress-stat">
+                            <span class="progress-stat-label">Downloaded</span>
+                            <span id="downloadedSize" class="progress-stat-value">0 MB</span>
+                        </div>
+                        <div class="progress-stat">
+                            <span class="progress-stat-label">Remaining</span>
+                            <span id="remainingSize" class="progress-stat-value">&mdash;</span>
+                        </div>
+                        <div class="progress-stat">
+                            <span class="progress-stat-label">Speed</span>
+                            <span id="downloadSpeed" class="progress-stat-value">&mdash;</span>
+                        </div>
+                        <div class="progress-stat">
+                            <span class="progress-stat-label">ETA</span>
+                            <span id="downloadEta" class="progress-stat-value">&mdash;</span>
+                        </div>
+                    </div>
+                    <p id="statusText" class="status-text"></p>
+                    <div id="errorDisplay" class="error-message"></div>
+                </div>
+            </section>
+
+            <!-- Success Section -->
+            <section id="successSection" class="success-section hidden">
+                <div class="success-card">
+                    <i class="fas fa-check-circle"></i>
+                    <h3>Download Completed!</h3>
+                    <p id="successMessage"></p>
+                    <p class="download-path">
+    <span id="downloadPath">
+        Your browser Downloads folder
+    </span>
+</p>
+                </div>
+            </section>
+
+            <!-- Info Section -->
+            <section class="info-box">
+                <div class="info-content">
+                    <h3><i class="fas fa-info-circle"></i> How to use</h3>
+                    <ul>
+                        <li>Paste a YouTube URL (video or playlist) in the input field</li>
+                        <li>Click "Get Info" to fetch available qualities</li>
+                        <li>Select your preferred quality</li>
+                        <li>Click "Start Download" to begin downloading</li>
+                        <li>The completed file will automatically download to your browser's Downloads folder</li>
+                    </ul>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>yt<span class="accent">grabber</span> v1.0 &middot; Download your favorite videos safely</p>
+        </footer>
+    </div>
+
+    <div class="status-pill">
+        <span class="pulse-dot"></span>
+        <span>Server Online</span>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
